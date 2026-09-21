@@ -4,29 +4,26 @@
 <h2 style="margin:4px 0 12px;">[AI-Lab] 情報入口</h2>
 <div id="count"></div><div id="list"><p>載入中…</p></div>
 <script>
-const SITES=[
-{id:"tech-news",t:"[AI-Lab] 近期 keynote・演講・研討會（EE／CS）",d:"資訊工程、電機工程、AI、半導體、通訊領域研討會與演講，每週一更新。",short:"EE/CS"},
-{id:"contest-news",t:"[AI-Lab] 創新實作・程式競賽・創業計畫",d:"黑客松、程式競賽、創業挑戰賽與實作展覽，每週一更新。",short:"競賽"},
-{id:"activity-news",t:"[AI-Lab] 成人學習・成長・交流・交友",d:"工作坊、讀書會、成長課程、聯誼交友（台南・高雄），每週一更新。",short:"成長"},
-{id:"cheap-news",t:"[AI-Lab] 優惠活動・打折・特價・免費贈送",d:"台南優惠、打折特價、買一送一、免費贈送情報，每週一更新。",short:"優惠"}];
+const SITES=[{"id":"tech-news","t":"[AI-Lab] 近期 keynote・演講・研討會（EE／CS）","d":"資訊工程、電機工程、AI、半導體、通訊領域研討會與演講，每週一更新。","short":"EE/CS"},{"id":"contest-news","t":"[AI-Lab] 創新實作・程式競賽・創業計畫","d":"黑客松、程式競賽、創業挑戰賽與實作展覽，每週一更新。","short":"競賽"},{"id":"activity-news","t":"[AI-Lab] 成人學習・成長・交流・交友","d":"工作坊、讀書會、成長課程、聯誼交友（台南・高雄），每週一更新。","short":"成長"},{"id":"cheap-news","t":"[AI-Lab] 優惠活動・打折・特價・免費贈送","d":"台南優惠、打折特價、買一送一、免費贈送情報，每週一更新。","short":"優惠"}];
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function ph(short){const s='<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="120" height="90" fill="#1a3a6b"/><text x="8" y="50" font-size="16" font-weight="bold" fill="#ffffff" font-family="sans-serif">'+short+'</text><text x="8" y="72" font-size="9" fill="#6b8fc7" font-family="sans-serif">AI-Lab</text></svg>';return "data:image/svg+xml;utf8,"+encodeURIComponent(s);}
-function getSeen(id){try{return JSON.parse(localStorage.getItem('ailab_seen_'+id)||'null')||{};}catch(e){return {};}}
-function markSeen(id,mx){try{localStorage.setItem('ailab_seen_'+id,JSON.stringify({max:mx||"",visited:true}));}catch(e){}}
+function getSeen(id){try{return JSON.parse(localStorage.getItem("ailab_seen_"+id)||"null")||{};}catch(e){return {};}}
+function markSeen(id,mx){try{localStorage.setItem("ailab_seen_"+id,JSON.stringify({max:mx||"",visited:true}));}catch(e){}}
 async function load(){
 const data=await Promise.all(SITES.map(async s=>{
 let n=0,mx="",cover=null,firstTitle="";
-try{const r=await fetch("/"+s.id+"/events.json");if(r.ok){const j=await r.json();n=j.length;for(const e of j){if(e.added&&e.added>mx)mx=e.added;if(!firstTitle&&e.title)firstTitle=e.title;if(!cover&&e.img)cover=e.img;}}}catch(e){}
+try{const r=await fetch("/"+s.id+"/events.json",{cache:"no-store"});if(r.ok){const j=await r.json();const arr=Array.isArray(j)?j:[];n=arr.length;for(const e of arr){if(e.added&&e.added>mx)mx=e.added;if(!firstTitle&&e.title)firstTitle=e.title;if(!cover&&e.img)cover=e.img;}}}catch(e){}
 return {s,n,mx,cover,firstTitle};}));
 data.forEach(d=>{const seen=getSeen(d.s.id);d.unseen=!!(d.mx&&(!seen.max||d.mx>seen.max));d.visited=!!seen.visited;});
 data.sort((a,b)=>{if(a.unseen!==b.unseen)return a.unseen?-1:1;if(b.mx!==a.mx)return b.mx<a.mx?-1:1;return 0;});
 const cards=data.map(({s,n,mx,cover,firstTitle})=>{
 const seen=getSeen(s.id);
 const isNew=!!(mx&&(!seen.max||mx>seen.max));
-const cls=isNew?' is-new':(seen.visited?' is-seen':'');
+const cls=isNew?" is-new":(seen.visited?" is-seen":"");
 const img=cover||ph(s.short);
-return '<div class="card'+cls+'"><div class="txt"><div class="meta">'+mx+'｜共 '+n+' 場 <span class="tag loc">'+esc(s.short)+'</span>'+(isNew?'<span class="badge-new">NEW</span>':'')+'</div><div class="t"><a style="color:inherit;text-decoration:none;" href="/'+s.id+'/">'+esc(s.t)+'</a></div><div class="d">'+esc(s.d)+(firstTitle?'<br>最新：'+esc(firstTitle.slice(0,24)):'')+'</div><a class="btn" href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')">進入</a></div><div class="thumb"><a href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')"><img loading="lazy" src="'+esc(img)+'" alt="" onerror="this.onerror=null;this.src=\''+ph(s.short)+'\'"></a></div></div>';});
-document.getElementById("count").textContent="四館情報，點卡進入";
+const meta=n===0?"\u5373\u5c07\u4e0a\u7dda\uff0c\u656c\u8acb\u671f\u5f85":mx+"\uff5c\u5171 "+n+" \u5834";
+return '<div class="card'+cls+'"><div class="txt"><div class="meta">'+meta+' <span class="tag loc">'+esc(s.short)+'</span>'+(isNew?'<span class="badge-new">NEW</span>':'')+'</div><div class="t"><a style="color:inherit;text-decoration:none;" href="/'+s.id+'/">'+esc(s.t)+'</a></div><div class="d">'+esc(s.d)+(firstTitle?'<br>\u6700\u65b0\uff1a'+esc(firstTitle.slice(0,24)):'')+'</div><a class="btn" href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')">\u9032\u5165</a></div><div class="thumb"><a href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')"><img loading="lazy" src="'+esc(img)+'" alt="" onerror="this.onerror=null;this.src=\''+ph(s.short)+'\'"></a></div></div>';});
+document.getElementById("count").textContent="\u60c5\u5831\u5eab\uff0c\u9ede\u5361\u9032\u5165";
 document.getElementById("list").innerHTML=cards.join("");
 }
 load();
