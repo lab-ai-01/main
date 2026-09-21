@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>[AI-Lab] 情報入口</title>
+<style>body{font-family:-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif;background:#f4f6f8;margin:0;padding:16px;color:#222}.wrap{max-width:720px;margin:0 auto}.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:12px;border-left:5px solid #1a73e8;box-shadow:0 1px 3px rgba(0,0,0,.06)}.t{font-size:17px;font-weight:bold;margin:2px 0 6px}.d{font-size:13px;color:#444}.meta{font-size:12px;color:#888;margin-top:6px}.btn{display:inline-block;background:#1a73e8;color:#fff;text-decoration:none;font-size:14px;padding:9px 20px;border-radius:8px;margin-top:10px}</style></head>
+<body><div class="wrap">
+<h2 style="margin:4px 0 4px;">[AI-Lab] 情報入口</h2>
+<div style="font-size:12px;color:#888;margin:0 0 14px;">三個情報庫，點卡進入</div>
+<div id="list"><p>載入中…</p></div>
+<script>
+const SITES=[
+{id:"tech-news",t:"[AI-Lab] 近期 keynote・演講・研討會（EE／CS）",d:"資訊工程、電機工程、AI、半導體、通訊領域研討會與演講，每週一更新。"},
+{id:"contest-news",t:"[AI-Lab] 創新實作・程式競賽・創業計畫",d:"黑客松、程式競賽、創業挑戰賽與實作展覽，每週一更新。"},
+{id:"activity-news",t:"[AI-Lab] 成人學習・成長・交流・交友",d:"工作坊、讀書會、成長課程、聯誼交友（台南・高雄），每週一更新。"}];
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function load(){
+const cards=await Promise.all(SITES.map(async s=>{
+let n="—",mx="—";
+try{const r=await fetch("/"+s.id+"/events.json");if(r.ok){const j=await r.json();n=j.length;for(const e of j){if(e.added&&e.added>mx)mx=e.added;}}}catch(e){}
+return '<div class="card"><div class="t">'+esc(s.t)+'</div><div class="d">'+esc(s.d)+'</div><div class="meta">資料更新：'+mx+'｜共 '+n+' 場</div><a class="btn" href="/'+s.id+'/">進入</a></div>';}));
+document.getElementById("list").innerHTML=cards.join("");
+}
+load();
+</script></div></body></html>
