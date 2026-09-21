@@ -18,7 +18,8 @@ const data=await Promise.all(SITES.map(async s=>{
 let n=0,mx="",cover=null,firstTitle="";
 try{const r=await fetch("/"+s.id+"/events.json");if(r.ok){const j=await r.json();n=j.length;for(const e of j){if(e.added&&e.added>mx)mx=e.added;if(!firstTitle&&e.title)firstTitle=e.title;if(!cover&&e.img)cover=e.img;}}}catch(e){}
 return {s,n,mx,cover,firstTitle};}));
-data.sort((a,b)=>{if(b.mx!==a.mx)return b.mx<a.mx?-1:1;return 0;});
+data.forEach(d=>{const seen=getSeen(d.s.id);d.unseen=!!(d.mx&&(!seen.max||d.mx>seen.max));d.visited=!!seen.visited;});
+data.sort((a,b)=>{if(a.unseen!==b.unseen)return a.unseen?-1:1;if(b.mx!==a.mx)return b.mx<a.mx?-1:1;return 0;});
 const cards=data.map(({s,n,mx,cover,firstTitle})=>{
 const seen=getSeen(s.id);
 const isNew=!!(mx&&(!seen.max||mx>seen.max));
