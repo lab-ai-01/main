@@ -7,7 +7,8 @@
 const SITES=[
 {id:"tech-news",t:"[AI-Lab] 近期 keynote・演講・研討會（EE／CS）",d:"資訊工程、電機工程、AI、半導體、通訊領域研討會與演講，每週一更新。",short:"EE/CS"},
 {id:"contest-news",t:"[AI-Lab] 創新實作・程式競賽・創業計畫",d:"黑客松、程式競賽、創業挑戰賽與實作展覽，每週一更新。",short:"競賽"},
-{id:"activity-news",t:"[AI-Lab] 成人學習・成長・交流・交友",d:"工作坊、讀書會、成長課程、聯誼交友（台南・高雄），每週一更新。",short:"成長"}];
+{id:"activity-news",t:"[AI-Lab] 成人學習・成長・交流・交友",d:"工作坊、讀書會、成長課程、聯誼交友（台南・高雄），每週一更新。",short:"成長"},
+{id:"cheap-news",t:"[AI-Lab] 優惠活動・打折・特價・免費贈送",d:"台南優惠、打折特價、買一送一、免費贈送情報，每週一更新。",short:"優惠"}];
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function ph(short){const s='<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="120" height="90" fill="#1a3a6b"/><text x="8" y="50" font-size="16" font-weight="bold" fill="#ffffff" font-family="sans-serif">'+short+'</text><text x="8" y="72" font-size="9" fill="#6b8fc7" font-family="sans-serif">AI-Lab</text></svg>';return "data:image/svg+xml;utf8,"+encodeURIComponent(s);}
 function getSeen(id){try{return JSON.parse(localStorage.getItem('ailab_seen_'+id)||'null')||{};}catch(e){return {};}}
