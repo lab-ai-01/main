@@ -20,9 +20,10 @@ const seen=getSeen(s.id);
 const isNew=!!(mx&&(!seen.max||mx>seen.max));
 const cls=isNew?' is-new':(seen.visited?' is-seen':'');
 const img=cover||ph(s.short);
-return '<div class="card'+cls+'"><div class="txt"><div class="meta">'+mx+'｜共 '+n+' 場 <span class="tag loc">'+esc(s.short)+'</span>'+(isNew?'<span class="badge-new">NEW</span>':'')+'</div><div class="t">'+esc(s.t)+'</div><div class="d">'+esc(s.d)+(firstTitle?'<br>最新：'+esc(firstTitle.slice(0,24)):'')+'</div><a class="btn" href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')">進入</a></div><div class="thumb"><a href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')"><img loading="lazy" src="'+esc(img)+'" alt="" onerror="this.onerror=null;this.src=\''+ph(s.short)+'\'"></a></div></div>';}));
+return '<div class="card'+cls+'"><div class="txt"><div class="meta">'+mx+'｜共 '+n+' 場 <span class="tag loc">'+esc(s.short)+'</span>'+(isNew?'<span class="badge-new">NEW</span>':'')+'</div><div class="t"><a style="color:inherit;text-decoration:none;" href="/'+s.id+'/">'+esc(s.t)+'</a></div><div class="d">'+esc(s.d)+(firstTitle?'<br>最新：'+esc(firstTitle.slice(0,24)):'')+'</div><a class="btn" href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')">進入</a></div><div class="thumb"><a href="/'+s.id+'/" onclick="markSeen(\''+s.id+'\',\''+mx+'\')"><img loading="lazy" src="'+esc(img)+'" alt="" onerror="this.onerror=null;this.src=\''+ph(s.short)+'\'"></a></div></div>';}));
 document.getElementById("count").textContent="三館情報，點卡進入";
 document.getElementById("list").innerHTML=cards.join("");
 }
 load();
+try{if(typeof window!=="undefined"&&window.addEventListener){window.addEventListener("pageshow",function(){load();});}if(typeof document!=="undefined"&&document.addEventListener){document.addEventListener("visibilitychange",function(){if(!document.hidden)load();});}}catch(_){}
 </script></div></body></html>
